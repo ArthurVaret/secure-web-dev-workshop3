@@ -3,8 +3,7 @@
 
 const router = require('express').Router()
 const locationsService = require('./locations.service')
-const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true }));
+
 
 router.get('/locations', async (req, res) => {
 	return res.status(200).send({locations: await locationsService.findAll()})
@@ -12,19 +11,15 @@ router.get('/locations', async (req, res) => {
 router.get('/locations/:id', async (req, res) => {
 	return res.status(200).send({locations: await locationsService.locationById(req.params.id)})
 })
-
 router.delete('/locations/:id', async (req, res) => {
 	return res.status(200).send({locations: await locationsService.deleteLocationById(req.params.id)})
 })
-
 router.put('/locations/:id', async (req, res) => {
 	return res.status(200).send({locations: await locationsService.updateLocation(req.params.id, req.body)})
 })
-
 router.post('/locations', async (req, res) => {
 	return res.status(200).send({locations: await locationsService.addLocation(req.body)})
 })
-
 router.get('/test',(request,response) => {
 	return response.status(200).send("Hello World");
 });

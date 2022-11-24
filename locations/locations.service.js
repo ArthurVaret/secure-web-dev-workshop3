@@ -24,7 +24,7 @@ async function locationById(id) {
 
 async function deleteLocationById(id) {
 	try {
-		await Location.findOneAndDelete({id:id});
+		await Location.findOneAndDelete({_id:id});
 		return "Bien supprimé";
 	} catch (err) {
 		return "Cette location n'existe pas";
@@ -57,7 +57,6 @@ async function updateLocation(id, newProperty){
 module.exports = {
 	findAll,
 	locationById,
-	locationByName,
 	addLocation,
 	deleteLocationById,
 	updateLocation
