@@ -7,7 +7,7 @@ const saltRounds = 10;
 
 async function findAll () {
     try {
-        const response = await User.find();
+        const response = await User.find().select('-password');
         return response;
     } catch (err) {
         console.log("Cet utilisateur n'existe pas");
@@ -16,23 +16,23 @@ async function findAll () {
 }
 async function userMe(id) {
     try {
-        const response = await User.findOne({_id:id});
+        const response = await User.findOne({_id:id}).select('-password');
         return response;
     } catch (err) {
         return "User not exists";
         console.log(err);
     }
 }
-async function deleteUserMe(username) {
+async function deleteUserMe(id) {
     try {
-        await User.findOneAndDelete({username:username});
-        return "Bien supprimé";
+        const response = await User.findOneAndDelete({_id: id}).select('-password');
+        return response;
     } catch (err) {
-        return "Cet utilisateur n'existe pas";
         console.log(err);
+        return null;
     }
 }
-async function addUser(user) {
+async function register(user) {
     try {
         const hashedPwd = await bcrypt.hash(user.password, saltRounds)
         //console.log(hashedPwd);
@@ -43,14 +43,14 @@ async function addUser(user) {
         return null;
     }
 }
-async function updateUserMe(username, newProperty){
+async function updateUserMe(id, newProperty){
     try {
-        await User.findOneAndUpdate({username:username}, newProperty);
-        return "L'utilisateur a bien été modifié";
+        const response = await User.findOneAndUpdate({_id: id}, newProperty).select('-password');
+        return response;
 
     } catch (err) {
-        return "An error occured while updating an user...";
         console.log(err);
+        return null
     }
 }
 async function loginUser(user) {
@@ -82,7 +82,7 @@ async function generateJwt(user){
 module.exports = {
     findAll,
     userMe,
-    addUser,
+    register,
     deleteUserMe,
     updateUserMe,
     loginUser,

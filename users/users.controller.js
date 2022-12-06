@@ -5,7 +5,7 @@ const jwtStrategy = require('../auth/jwt.strategy')
 
 
 router.post('/users/register', async (req, res) => {
-    const user = await usersService.addUser(req.body)
+    const user = await usersService.register(req.body)
     console.log(user);
     if (user == null)
         return res.status(404).send({err: "User already exists."});
@@ -21,24 +21,43 @@ router.post('/users/login', async (req, res) => {
     else
         return res.status(403).send({err: "Incorrect username or password."});
 })
-router.get('/users/me', async (req, res) => {
-    console.log(req.headers['authorization'].split(' ')[1]);
-    const id = await jwtStrategy.userJwt(req.headers['authorization'].split(' ')[1]);
-    const user = await usersService.userMe(id);
-    console.log(user);
-    if (user) {
-        return res.status(200).send({user: user});
-    }
-    else
-        return res.status(403).send({err: "Unauthorized"});
-})
+
+router.route('/users/me')
+    .get(async (req, res) => {
+        console.log(req.headers['authorization'].split(' ')[1]);
+        const id = await jwtStrategy.userJwt(req.headers['authorization'].split(' ')[1]);
+        const user = await usersService.userMe(id);
+        console.log(user);
+        if (user) {
+            return res.status(200).send({mess: "You are registered as", user: user});
+        }
+        else
+            return res.status(403).send({err: "Unauthorized"});
+    })
+    .delete(async (req, res) => {
+        console.log(req.headers['authorization'].split(' ')[1]);
+        const id = await jwtStrategy.userJwt(req.headers['authorization'].split(' ')[1]);
+        const user = await usersService.deleteUserMe(id);
+        console.log(user);
+        if (user) {
+            return res.status(200).send({mess: "User deleted", user: user});
+        }
+        else
+            return res.status(403).send({err: "Unauthorized"});
+    })
+    .put(async (req, res) => {
+        console.log(req.headers['authorization'].split(' ')[1]);
+        const id = await jwtStrategy.userJwt(req.headers['authorization'].split(' ')[1]);
+        const user = await usersService.updateUserMe(id, req.body);
+        console.log(user);
+        if (user) {
+            return res.status(200).send({mess: "User updated", user: user});
+        }
+        else
+            return res.status(403).send({err: "Unauthorized"});
+    })
 router.get('/users', async (req, res) => {
-    return res.status(200).send({users: await usersService.findAll()})
+    return res.status(200).send({users: (await usersService.findAll())})
 })
-router.delete('/users/me', async (req, res) => {
-    //return res.status(200).send({users: await usersService.deleteUserMe(***)})
-})
-router.put('/users/me', async (req, res) => {
-    //return res.status(200).send({users: await usersService.updateUserMe(***, req.body)})
-})
+
 module.exports = router
