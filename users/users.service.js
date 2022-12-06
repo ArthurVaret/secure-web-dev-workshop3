@@ -1,5 +1,9 @@
 const User = require('./users.model');
 const Location = require("../locations/locations.model");
+const usersLocal = require('../auth/local.strategy')
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const saltRounds = 10;
 
 async function findAll () {
     try {
@@ -10,12 +14,12 @@ async function findAll () {
         console.log(err);
     }
 }
-async function userMe(username) {
+async function userMe(id) {
     try {
-        const response = await User.findOne({username:username});
+        const response = await User.findOne({_id:id});
         return response;
     } catch (err) {
-        return "Cet utilisateur n'existe pas";
+        return "User not exists";
         console.log(err);
     }
 }
@@ -30,11 +34,13 @@ async function deleteUserMe(username) {
 }
 async function addUser(user) {
     try {
-        await User.create(user);
-        return "L'utilisateur a bien été ajouté";
+        const hashedPwd = await bcrypt.hash(user.password, saltRounds)
+        //console.log(hashedPwd);
+        return await User.create({username:user.username, password:hashedPwd});
     } catch (err) {
+        console.log("on est dans l'erreur")
         console.log(err);
-        return "An error occured";
+        return null;
     }
 }
 async function updateUserMe(username, newProperty){
@@ -49,20 +55,36 @@ async function updateUserMe(username, newProperty){
 }
 async function loginUser(user) {
     try {
-        await User.findOne(user);
-        return "L'utilisateur a bien été ajouté";
+        const userData = await User.findOne({username:user.username});
+        const bool = await bcrypt.compare(user.password, userData.password);
+        if (bool) {
+            return userData;
+        }
+        else {
+            return null;
+        }
+        //return "Vous êtes connecté";
     } catch (err) {
         console.log(err);
-        return "An error occured";
+        return null;
     }
 }
+async function generateJwt(user){
+    try {
+        //console.log(user._id.toString())
+        console.log(jwt.sign(user._id.toString(), process.env.JWTSECRET));
+        return jwt.sign(user._id.toString(), process.env.JWTSECRET)
+    } catch (err) {
+        return "Error jwt generation."
+    }
+}
+
 module.exports = {
     findAll,
     userMe,
-    loginUser,
     addUser,
     deleteUserMe,
     updateUserMe,
-
-
+    loginUser,
+    generateJwt
 }
