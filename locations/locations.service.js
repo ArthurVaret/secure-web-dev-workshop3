@@ -7,8 +7,8 @@ async function findAll () {
 		const response = await Location.find();
 		return response;
 	} catch (err) {
-		console.log("Cette location n'existe pas");
 		console.log(err);
+		return null
 	}
 }
 
@@ -17,40 +17,36 @@ async function locationById(id) {
 		const response = await Location.findOne({_id:id});
 		return response;
 	} catch (err) {
-		return "Cette location n'existe pas";
 		console.log(err);
+		return null
 	}
 }
 
 async function deleteLocationById(id) {
 	try {
-		await Location.findOneAndDelete({_id:id});
-		return "Bien supprimé";
+		return await Location.findOneAndDelete({_id:id});
 	} catch (err) {
-		return "Cette location n'existe pas";
 		console.log(err);
+		return null
 	}
 }
 
 async function addLocation(location) {
 	try {
-		await Location.create(location);
-		return "La location a bien été ajouté";
+		return await Location.create(location);
 	} catch (err) {
 		console.log(err);
-		return "An error occured";
+		return null
 	}
 
 }
 
 async function updateLocation(id, newProperty){
 	try {
-		await Location.findOneAndUpdate({_id:id}, newProperty);
-		return "Location updated ! ";
-
+		return Location.findOneAndUpdate({_id:id}, newProperty);
 	} catch (err) {
-		return "An error occured while updating a location...";
 		console.log(err);
+		return null
 	}
 }
 

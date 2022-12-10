@@ -1,25 +1,52 @@
-// This file is used to map API calls (Presentation Layer) with the
-// Business-Logic layer
-
 const router = require('express').Router()
 const locationsService = require('./locations.service')
+const passport = require("passport");
+const localStrategy = require('../auth/local.strategy')
+const jwtStrategy = require('../auth/jwt.strategy')
 
-
-router.get('/locations', async (req, res) => {
-	return res.status(200).send({locations: await locationsService.findAll()})
-})
-router.get('/locations/:id', async (req, res) => {
-	return res.status(200).send({locations: await locationsService.locationById(req.params.id)})
-})
-router.delete('/locations/:id', async (req, res) => {
-	return res.status(200).send({locations: await locationsService.deleteLocationById(req.params.id)})
-})
-router.put('/locations/:id', async (req, res) => {
-	return res.status(200).send({locations: await locationsService.updateLocation(req.params.id, req.body)})
-})
-router.post('/locations', async (req, res) => {
-	return res.status(200).send({locations: await locationsService.addLocation(req.body)})
-})
+router.use('/locations', (passport.authenticate('jwt', {session: false})));
+router.route('/locations/:id')
+	.get(async (req, res) => {
+		const loc = await locationsService.locationById(req.params.id)
+		if (loc) {
+			return res.status(200).send({location: loc})
+		}
+		else
+			return res.status(404).send({err: "No such location."})
+	})
+	.delete(async (req, res) => {
+		const loc = await locationsService.deleteLocationById(req.params.id)
+		if (loc) {
+			return res.status(200).send({location: loc})
+		}
+		else
+			return res.status(404).send({err: "Deletion failed."})
+	})
+	.put(async (req, res) => {
+		const loc = await locationsService.updateLocation(req.params.id, req.body)
+		if (loc) {
+			return res.status(200).send({location: loc})
+		}
+		else
+			return res.status(404).send({err: "Update failed."})
+	})
+router.route('/locations')
+	.get(async (req, res) => {
+		const locs = await locationsService.findAll()
+		if (locs) {
+			return res.status(200).send({locations: locs})
+		}
+		else
+			return res.status(404).send({err: "An error occurred."})
+	})
+	.post(async (req, res) => {
+		const loc = await locationsService.addLocation(req.body)
+		if (loc) {
+			return res.status(200).send({location: loc})
+		}
+		else
+			return res.status(404).send({err: "An error occurred."})
+	})
 router.get('/test',(request,response) => {
 	return response.status(200).send("Hello World");
 });

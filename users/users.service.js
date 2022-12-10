@@ -35,10 +35,9 @@ async function deleteUserMe(id) {
 async function register(user) {
     try {
         const hashedPwd = await bcrypt.hash(user.password, saltRounds)
-        //console.log(hashedPwd);
+        console.log(hashedPwd);
         return await User.create({username:user.username, password:hashedPwd});
     } catch (err) {
-        console.log("on est dans l'erreur")
         console.log(err);
         return null;
     }
@@ -53,27 +52,10 @@ async function updateUserMe(id, newProperty){
         return null
     }
 }
-async function loginUser(user) {
-    try {
-        const userData = await User.findOne({username:user.username});
-        const bool = await bcrypt.compare(user.password, userData.password);
-        if (bool) {
-            return userData;
-        }
-        else {
-            return null;
-        }
-        //return "Vous êtes connecté";
-    } catch (err) {
-        console.log(err);
-        return null;
-    }
-}
+
 async function generateJwt(user){
     try {
-        //console.log(user._id.toString())
-        console.log(jwt.sign(user._id.toString(), process.env.JWTSECRET));
-        return jwt.sign(user._id.toString(), process.env.JWTSECRET)
+        return jwt.sign({sub:user._id.toString()}, process.env.JWTSECRET)
     } catch (err) {
         return "Error jwt generation."
     }
@@ -85,6 +67,5 @@ module.exports = {
     register,
     deleteUserMe,
     updateUserMe,
-    loginUser,
     generateJwt
 }
