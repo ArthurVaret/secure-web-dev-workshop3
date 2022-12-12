@@ -8,9 +8,9 @@ const {roleMiddleware} = require("../auth/authRoles");
 router.post('/users/register', async (req, res) => {
     const user = await usersService.register(req.body);
     if (user == null)
-        return res.status(404).send({err: "User already exists."});
+        return res.status(418).send({err: "User already exists."});
     else
-        return res.status(200).send({user: user.username});
+        return res.status(201).send({user: user.username});
 })
 router.use('/users/login', passport.authenticate('local', {session: false}));
 router.post( '/users/login',async (req, res) => {
