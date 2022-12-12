@@ -3,6 +3,7 @@ const usersService = require('./users.service')
 const localStrategy = require('../auth/local.strategy')
 const jwtStrategy = require('../auth/jwt.strategy')
 var passport = require('passport')
+const {roleMiddleware} = require("../auth/authRoles");
 
 router.post('/users/register', async (req, res) => {
     const user = await usersService.register(req.body);
@@ -46,7 +47,8 @@ router.route('/users/me')
         else
             return res.status(403).send({err: "Unauthorized"});
     })
-router.get('/users', async (req, res) => {
+
+router.get('/users', passport.authenticate('jwt', {session: false}), roleMiddleware(['admin']),async (req, res) => {
     return res.status(200).send({users: (await usersService.findAll())})
 })
 

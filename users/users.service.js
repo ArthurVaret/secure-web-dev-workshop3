@@ -7,26 +7,23 @@ const saltRounds = 10;
 
 async function findAll () {
     try {
-        const response = await User.find().select('-password');
-        return response;
+        return await User.find().select('-password');
     } catch (err) {
-        console.log("Cet utilisateur n'existe pas");
         console.log(err);
+        return null
     }
 }
 async function userMe(id) {
     try {
-        const response = await User.findOne({_id:id}).select('-password');
-        return response;
+        return await User.findOne({_id:id}).select('-password');
     } catch (err) {
-        return "User not exists";
         console.log(err);
+        return null
     }
 }
 async function deleteUserMe(id) {
     try {
-        const response = await User.findOneAndDelete({_id: id}).select('-password');
-        return response;
+        return await User.findOneAndDelete({_id: id}).select('-password');
     } catch (err) {
         console.log(err);
         return null;
@@ -44,9 +41,10 @@ async function register(user) {
 }
 async function updateUserMe(id, newProperty){
     try {
-        const response = await User.findOneAndUpdate({_id: id}, newProperty).select('-password');
-        return response;
-
+        if (newProperty.role) {
+            delete newProperty.role;
+        }
+        return await User.findOneAndUpdate({_id: id}, newProperty).select('-password');
     } catch (err) {
         console.log(err);
         return null

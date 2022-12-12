@@ -3,6 +3,7 @@ const locationsService = require('./locations.service')
 const passport = require("passport");
 const localStrategy = require('../auth/local.strategy')
 const jwtStrategy = require('../auth/jwt.strategy')
+const {roleMiddleware} = require("../auth/authRoles");
 
 router.use('/locations', (passport.authenticate('jwt', {session: false})));
 router.route('/locations/:id')
@@ -14,7 +15,7 @@ router.route('/locations/:id')
 		else
 			return res.status(404).send({err: "No such location."})
 	})
-	.delete(async (req, res) => {
+	.delete(roleMiddleware(['admin']), async (req, res) => {
 		const loc = await locationsService.deleteLocationById(req.params.id)
 		if (loc) {
 			return res.status(200).send({location: loc})
@@ -22,7 +23,7 @@ router.route('/locations/:id')
 		else
 			return res.status(404).send({err: "Deletion failed."})
 	})
-	.put(async (req, res) => {
+	.put(roleMiddleware(['admin']), async (req, res) => {
 		const loc = await locationsService.updateLocation(req.params.id, req.body)
 		if (loc) {
 			return res.status(200).send({location: loc})
@@ -39,7 +40,7 @@ router.route('/locations')
 		else
 			return res.status(404).send({err: "An error occurred."})
 	})
-	.post(async (req, res) => {
+	.post(roleMiddleware(['admin']), async (req, res) => {
 		const loc = await locationsService.addLocation(req.body)
 		if (loc) {
 			return res.status(200).send({location: loc})

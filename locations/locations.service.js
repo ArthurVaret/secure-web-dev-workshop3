@@ -4,8 +4,7 @@ const Location = require('./locations.model')
 
 async function findAll () {
 	try {
-		const response = await Location.find();
-		return response;
+		return await Location.find();
 	} catch (err) {
 		console.log(err);
 		return null
@@ -14,8 +13,7 @@ async function findAll () {
 
 async function locationById(id) {
 	try {
-		const response = await Location.findOne({_id:id});
-		return response;
+		return await Location.findOne({_id:id});
 	} catch (err) {
 		console.log(err);
 		return null
