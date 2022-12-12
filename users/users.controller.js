@@ -2,7 +2,7 @@ const router = require('express').Router()
 const usersService = require('./users.service')
 const localStrategy = require('../auth/local.strategy')
 const jwtStrategy = require('../auth/jwt.strategy')
-var passport = require('passport')
+const passport = require('passport')
 const {roleMiddleware} = require("../auth/authRoles");
 
 router.post('/users/register', async (req, res) => {
