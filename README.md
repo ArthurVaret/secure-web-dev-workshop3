@@ -26,14 +26,23 @@ Limit user access to resources
 > API requests according to the different routes (http://localhost:3000)
 
 GET  /users --> to get all users
+
 POST /users/register --> send JSON with username and password
+
 POST /users/login --> give username and password in your query || you'll receive a token to have access to other routes according to your role level
+
 GET  /users/me --> see the user logged in
+
 PUT  /users/me --> update current user (send JSON of modification)
+
 DEL  /users/me --> delete current user
+
 GET  /locations --> to get all locations
+
 POST /locations --> create location (JSON)
+
 GET  /locations/:id --> to get one location by id
+
 DEL  /locations/:id --> delete one location by id
 
 ## Security
