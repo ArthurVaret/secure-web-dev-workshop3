@@ -3,6 +3,7 @@ const User = require("../users/users.model");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 
+//function to log in with passport
 passport.use(new Strategy(async function (username, password, done) {
     try {
         const user = await User.findOne({username:username});

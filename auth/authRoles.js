@@ -1,3 +1,4 @@
+//verification of the role of the user
 function roleMiddleware (allowedRoles) {
     return function (req, res, next) {
         if (allowedRoles.includes(req.user?.role)) {

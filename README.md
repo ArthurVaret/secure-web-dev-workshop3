@@ -1,50 +1,54 @@
-# Workshop 3 - Create an API (ExpressJS)
+# Creation of an API (ExpressJS)
 
-## 🌟 Goal
+## 🌟 Purpose
+> Build a REST API with ExpressJS with Presentation Layer, Business Logic Layer and Database Layer
+> Authenticate users and secure access to backend data
+> Limit user access to resources
 
-> Build a REST API with ExpressJS
-
-## 👷 Prerequisites
-
-1. Fork this repository then clone it on your computer
-2. install Insomnia (or your API Testing tool of choice)
-3. Paste your .env file from workshop2 containing credentials to your Mongo Database
-
-## 🗒 What to do
-
-> ⚠ Commit your changes after **each** instruction, following the commit message format:
-> ```text
-> feat(1): Initiate NPM Project
-> ```
-
+## How to run
 1. Install existing packages with `npm install`
    > ```shell
    >  npm install
    > ```
-2. Add NPM packages `express`
-   > Mongoose is a package making mongo request easier and more secure
+2. Add NPM packages `mongoose`, `dotenv` and `express`
    > ```shell
+   > npm install --save mongoose
+   > npm install --save dotenv
    > npm install --save express
    > ```
-3. Put your database credentials in a file named `.env` (from Workshop2)
-4. Take a look at the architecture 
-   > One Folder per entity.
-   > In each folder, 3 files:
-   > 
-   > entity.controller.js -> Presentation Layer, API
-   > 
-   > entity.service.js -> Business Logic Layer
-   > 
-   > entity.model.js -> Database Layer
-5. Implement a "Hello World" route, on GET / that returns "Hello World"
-   1. Visit the route at http://localhost:3000/
-6. Create the API CRUD for Location
-   1. Create routes at Presentation Layer
-   2. Implement business logic in the Location Service
+3. Put your database credentials and your JSON Web Token secret in a file named `.env` like:
+   > ```dotenv 
+   > MONGO_URI=mongodb://username:password@host:port/database
+   > JWTSECRET=ceciestmonsecretdejwt
    > ```
-   > For reference, CRUD:
-   > Create: /locations
-   > Update: /locations/:id
-   > Request (Get All: /locations , Get One: /locations/:id)
-   > Delete: /locations/:id
-   > ```
+
+## How to use
+API requests according to the different routes (http://localhost:3000)
+> GET  /users --> to get all users
+> POST /users/register --> send JSON with username and password
+> POST /users/login --> give username and password in your query || you'll receive a token to have access to other routes according to your role level
+> GET  /users/me --> see the user logged in
+> PUT  /users/me --> update current user (send JSON of modification)
+> DEL  /users/me --> delete current user
+> GET  /locations --> to get all locations
+> POST /locations --> create location (JSON)
+> GET  /locations/:id --> to get one location by id
+> DEL  /locations/:id --> delete one location by id
+
+## Security
+Once a registration request is received, the password is `hashed` with bcrypt and a salt, and the user is stored with this hashed
+password in database.
+
+Once a login request is received, the backend will hash the password and compare it with the hash stored on the user.
+If hashes match, the backend will deliver a JSON Web Token (JWT), a proof of authentication containing the user's ID.
+
+In this project, a normal user can only GET locations and manage his account.
+You need to have the role "admin" to get all users or create, modify or delete locations.
+
+### Improvements
+> I tried the JWT breach when "alg": "none" but the library is already protecting us from this attack
+Still no httpS and no query limit to protect from denial of service  
+
+## SonarCloud
+[SonarCloud](https://sonarcloud.io/summary/overall?id=ArthurVaret_secure-web-dev-workshop3)
+> Shouldn't trust user input in case of noSQL injection

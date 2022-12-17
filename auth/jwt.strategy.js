@@ -6,6 +6,7 @@ const usersService = require("../users/users.service");
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 
+//verification of token as proof of identity
 passport.use( new Strategy({
     secretOrKey: process.env.JWTSECRET,
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
