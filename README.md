@@ -2,7 +2,9 @@
 
 ## 🌟 Purpose
 Build a REST API with ExpressJS with Presentation Layer, Business Logic Layer and Database Layer
+
 Authenticate users and secure access to backend data
+
 Limit user access to resources
 
 ## How to run
